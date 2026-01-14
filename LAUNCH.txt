@@ -1,0 +1,108 @@
+🚀 HOW TO LAUNCH THE WEB APPLICATION
+
+════════════════════════════════════════════════════════════════════════════════
+
+STEP 1: PREPARE
+─────────────────────────────────────────────────────────────────────────────
+Navigate to your Jadwal folder:
+  cd "d:\Academic\Kuliah - ISTN\Semester 3\OOP dan Agentic AI\Jadwal"
+
+
+STEP 2: CHOOSE ONE OF THESE OPTIONS:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+OPTION A: EASIEST (Windows Only)
+─────────────────────────────────────────────────────────────────────────────
+1. Double-click: run_web_app.bat
+2. Wait for message: "Starting Web Application..."
+3. Open browser: http://localhost:5000
+
+That's it! The web app is running.
+
+
+OPTION B: COMMAND PROMPT
+─────────────────────────────────────────────────────────────────────────────
+1. Open CMD
+2. Navigate to Jadwal folder
+3. Run command:
+   python app.py
+
+4. You should see:
+   * Running on http://127.0.0.1:5000
+
+5. Open browser: http://localhost:5000
+
+
+OPTION C: POWERSHELL
+─────────────────────────────────────────────────────────────────────────────
+1. Open PowerShell
+2. Run:
+   cd "d:\Academic\Kuliah - ISTN\Semester 3\OOP dan Agentic AI\Jadwal"
+   python app.py
+
+3. Open browser: http://localhost:5000
+
+
+OPTION D: VS CODE TERMINAL
+─────────────────────────────────────────────────────────────────────────────
+1. Open VS Code
+2. Open terminal (View → Terminal)
+3. Run:
+   python app.py
+
+4. Open browser: http://localhost:5000
+
+════════════════════════════════════════════════════════════════════════════════
+
+AFTER STARTUP:
+
+✓ Open your browser
+✓ Go to: http://localhost:5000
+✓ You should see the beautiful web interface
+
+════════════════════════════════════════════════════════════════════════════════
+
+FEATURES YOU CAN TEST:
+
+1. 📅 ADD A SCHEDULE
+   - Click "Add New Schedule"
+   - Fill in the form
+   - Click "Add Schedule"
+
+2. ⚠️ TRIGGER A CONFLICT
+   - Try adding a second schedule in same room/day with overlapping time
+   - System will detect the conflict and reject it
+
+3. 📊 VIEW STATISTICS
+   - Click "Statistics" tab
+   - See live stats update
+
+4. 📋 VIEW LOGS
+   - Click "Logs" tab
+   - See all events recorded
+
+════════════════════════════════════════════════════════════════════════════════
+
+STOP THE APPLICATION:
+
+In terminal: Press CTRL+C
+
+════════════════════════════════════════════════════════════════════════════════
+
+TROUBLESHOOTING:
+
+If port 5000 is already in use:
+  Edit app.py, last line:
+  app.run(debug=True, host='0.0.0.0', port=5001)  # Change 5000 to 5001
+  Then open: http://localhost:5001
+
+If Flask is not installed:
+  Run: pip install -r requirements.txt
+
+If page won't load:
+  Try: http://127.0.0.1:5000 (instead of localhost)
+
+════════════════════════════════════════════════════════════════════════════════
+
+ENJOY! 🎉

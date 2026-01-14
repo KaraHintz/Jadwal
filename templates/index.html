@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Conflict Detection System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>📅 Schedule Conflict Detection System</h1>
+                <p class="subtitle">Automatic schedule conflict detection and notifications</p>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navbar">
+            <ul class="nav-items">
+                <li><a href="#schedules" class="nav-link active" onclick="showSection('schedules')">Schedules</a></li>
+                <li><a href="#conflicts" class="nav-link" onclick="showSection('conflicts')">Conflicts</a></li>
+                <li><a href="#statistics" class="nav-link" onclick="showSection('statistics')">Statistics</a></li>
+                <li><a href="#logs" class="nav-link" onclick="showSection('logs')">Logs</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Schedules Section -->
+            <section id="schedules" class="section active">
+                <div class="section-header">
+                    <h2>📚 Manage Schedules</h2>
+                    <button class="btn btn-primary" onclick="showAddScheduleForm()">+ Add New Schedule</button>
+                </div>
+
+                <!-- Add Schedule Form -->
+                <div id="addScheduleForm" class="form-container hidden">
+                    <div class="form-box">
+                        <h3>Add New Schedule</h3>
+                        <form id="scheduleForm" onsubmit="addSchedule(event)">
+                            <div class="form-group">
+                                <label>Schedule ID:</label>
+                                <input type="text" id="scheduleId" required placeholder="e.g., SCH001">
+                            </div>
+                            <div class="form-group">
+                                <label>Course Name:</label>
+                                <input type="text" id="courseName" required placeholder="e.g., OOP dan Agentic AI">
+                            </div>
+                            <div class="form-group">
+                                <label>Day:</label>
+                                <select id="hari" required>
+                                    <option value="">Select a day</option>
+                                    <option value="Senin">Senin (Monday)</option>
+                                    <option value="Selasa">Selasa (Tuesday)</option>
+                                    <option value="Rabu">Rabu (Wednesday)</option>
+                                    <option value="Kamis">Kamis (Thursday)</option>
+                                    <option value="Jumat">Jumat (Friday)</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Start Time:</label>
+                                    <input type="time" id="jamMulai" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>End Time:</label>
+                                    <input type="time" id="jamSelesai" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Room:</label>
+                                <input type="text" id="ruangan" required placeholder="e.g., Lab 301">
+                            </div>
+                            <div class="form-group">
+                                <label>Lecturer:</label>
+                                <input type="text" id="dosen" required placeholder="e.g., Dr. Ahmad">
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-success">Add Schedule</button>
+                                <button type="button" class="btn btn-secondary" onclick="hideAddScheduleForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Schedules List -->
+                <div class="table-container">
+                    <h3>Current Schedules</h3>
+                    <table class="table" id="schedulesTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Course</th>
+                                <th>Day</th>
+                                <th>Time</th>
+                                <th>Room</th>
+                                <th>Lecturer</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="schedulesBody">
+                            <tr>
+                                <td colspan="7" class="text-center">No schedules yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Conflicts Section -->
+            <section id="conflicts" class="section">
+                <div class="section-header">
+                    <h2>⚠️ Schedule Conflicts</h2>
+                    <button class="btn btn-secondary" onclick="refreshConflicts()">Refresh</button>
+                </div>
+
+                <div id="conflictsContainer" class="conflicts-container">
+                    <div class="message-box">No conflicts detected ✓</div>
+                </div>
+            </section>
+
+            <!-- Statistics Section -->
+            <section id="statistics" class="section">
+                <div class="section-header">
+                    <h2>📊 System Statistics</h2>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalSchedules">0</div>
+                        <div class="stat-label">Total Schedules</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalConflicts">0</div>
+                        <div class="stat-label">Total Conflicts</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="roomConflicts">0</div>
+                        <div class="stat-label">Room Conflicts</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="lecturerConflicts">0</div>
+                        <div class="stat-label">Lecturer Conflicts</div>
+                    </div>
+                </div>
+
+                <div class="stats-detail">
+                    <div class="detail-box">
+                        <h4>Affected Rooms</h4>
+                        <div id="affectedRooms" class="detail-content">-</div>
+                    </div>
+                    <div class="detail-box">
+                        <h4>Affected Lecturers</h4>
+                        <div id="affectedLecturers" class="detail-content">-</div>
+                    </div>
+                    <div class="detail-box">
+                        <h4>System Status</h4>
+                        <div id="systemStatus" class="detail-content status-ok">✓ OK</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Logs Section -->
+            <section id="logs" class="section">
+                <div class="section-header">
+                    <h2>📋 Event Logs</h2>
+                    <button class="btn btn-danger" onclick="clearLogs()">Clear Logs</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="table" id="logsTable">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Schedule ID</th>
+                                <th>Status</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsBody">
+                            <tr>
+                                <td colspan="4" class="text-center">No logs yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2026 Schedule Conflict Detection System | OOP dan Agentic AI</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
