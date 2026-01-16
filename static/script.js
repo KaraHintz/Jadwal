@@ -73,9 +73,18 @@ async function addSchedule(event) {
         } else {
             if (data.conflicts) {
                 let conflictMessage = 'Conflicts detected:\n\n';
-                data.conflicts.forEach(conflict => {
+                data.conflicts.forEach((conflict, idx) => {
+                    conflictMessage += `--- Conflict #${idx + 1} ---\n`;
                     conflictMessage += `Type: ${conflict.type}\n`;
                     conflictMessage += `With: ${conflict.with_schedule}\n\n`;
+                    
+                    if (conflict.suggestions && conflict.suggestions.length > 0) {
+                        conflictMessage += 'Suggestions:\n';
+                        conflict.suggestions.forEach((sugg, sIdx) => {
+                            conflictMessage += `  ${sIdx + 1}. ${sugg.replace(/^[^a-zA-Z]+/, '')}\n`;
+                        });
+                    }
+                    conflictMessage += '\n';
                 });
                 alert(conflictMessage);
             } else {
@@ -160,6 +169,10 @@ async function refreshConflicts() {
         data.conflicts
             .filter(c => c.type === 'room_conflict')
             .forEach((conflict, index) => {
+                let suggestionsHtml = conflict.suggestions 
+                    ? conflict.suggestions.map(s => `<li>${s}</li>`).join('')
+                    : '';
+                
                 html += `
                     <div class="conflict-card room">
                         <div class="conflict-title">⚠️ Room Conflict #${index + 1}</div>
@@ -170,6 +183,12 @@ async function refreshConflicts() {
                             <strong>Schedule 2:</strong> ${conflict.details.course2} (${conflict.details.schedule2_time})<br>
                             <strong>Affected Schedules:</strong> ${conflict.schedules.join(', ')}
                         </div>
+                        <div class="conflict-suggestions">
+                            <strong>💡 Resolution Suggestions:</strong>
+                            <ul>
+                                ${suggestionsHtml}
+                            </ul>
+                        </div>
                     </div>
                 `;
             });
@@ -178,6 +197,10 @@ async function refreshConflicts() {
         data.conflicts
             .filter(c => c.type === 'lecturer_conflict')
             .forEach((conflict, index) => {
+                let suggestionsHtml = conflict.suggestions 
+                    ? conflict.suggestions.map(s => `<li>${s}</li>`).join('')
+                    : '';
+                
                 html += `
                     <div class="conflict-card lecturer">
                         <div class="conflict-title">⚠️ Lecturer Conflict #${index + 1}</div>
@@ -187,6 +210,12 @@ async function refreshConflicts() {
                             <strong>Schedule 1:</strong> ${conflict.details.course1} in ${conflict.details.room1} (${conflict.details.schedule1_time})<br>
                             <strong>Schedule 2:</strong> ${conflict.details.course2} in ${conflict.details.room2} (${conflict.details.schedule2_time})<br>
                             <strong>Affected Schedules:</strong> ${conflict.schedules.join(', ')}
+                        </div>
+                        <div class="conflict-suggestions">
+                            <strong>💡 Resolution Suggestions:</strong>
+                            <ul>
+                                ${suggestionsHtml}
+                            </ul>
                         </div>
                     </div>
                 `;
