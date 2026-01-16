@@ -92,7 +92,11 @@ def add_schedule():
                 {
                     'type': c.conflict_type,
                     'with_schedule': c.affected_schedules[1].id if len(c.affected_schedules) > 1 else 'Unknown',
-                    'details': c.details
+                    'details': c.details,
+                    'suggestions': get_conflict_suggestions({
+                        'type': c.conflict_type,
+                        'details': c.details
+                    })
                 }
                 for c in conflicts
             ]
@@ -172,6 +176,40 @@ def delete_schedule(schedule_id):
     return jsonify({'message': 'Schedule deleted successfully'})
 
 
+def get_conflict_suggestions(conflict):
+    """Generate resolution suggestions for a conflict"""
+    suggestions = []
+    
+    if conflict['type'] == 'room_conflict':
+        room = conflict['details']['room']
+        day = conflict['details']['day']
+        course1 = conflict['details']['course1']
+        course2 = conflict['details']['course2']
+        
+        suggestions = [
+            f"🔄 Reschedule '{course1}' to a different day or time slot",
+            f"🔄 Reschedule '{course2}' to a different day or time slot",
+            f"🏢 Move one course to a different room (e.g., Lab 302, Lab 303) on {day}",
+            f"⏰ Stagger the time slots: adjust start/end times to avoid overlap in {room}",
+            f"🎯 Consider holding one course online to free up {room}"
+        ]
+    
+    elif conflict['type'] == 'lecturer_conflict':
+        lecturer = conflict['details']['lecturer']
+        course1 = conflict['details']['course1']
+        course2 = conflict['details']['course2']
+        
+        suggestions = [
+            f"👨‍🏫 Assign a substitute lecturer for '{course1}' or '{course2}'",
+            f"🔄 Reschedule '{course1}' to a different day or time",
+            f"🔄 Reschedule '{course2}' to a different day or time",
+            f"⏰ Adjust timing so {lecturer} can handle both courses (increase break time)",
+            f"🎓 Split one course section and assign to another qualified lecturer"
+        ]
+    
+    return suggestions
+
+
 @app.route('/api/conflicts', methods=['GET'])
 def get_conflicts():
     """Get current conflicts"""
@@ -181,7 +219,11 @@ def get_conflicts():
         {
             'type': c.conflict_type,
             'schedules': [s.id for s in c.affected_schedules],
-            'details': c.details
+            'details': c.details,
+            'suggestions': get_conflict_suggestions({
+                'type': c.conflict_type,
+                'details': c.details
+            })
         }
         for c in conflicts
     ]
