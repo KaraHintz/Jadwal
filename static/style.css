@@ -309,6 +309,43 @@ body {
     font-size: 0.9em;
     color: #666;
     line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.conflict-suggestions {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 12px 15px;
+    border-radius: 4px;
+    margin-top: 15px;
+    border-top: 2px solid #ffc107;
+}
+
+.conflict-suggestions strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 0.95em;
+}
+
+.conflict-suggestions ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.conflict-suggestions li {
+    padding: 6px 0 6px 25px;
+    position: relative;
+    color: #555;
+    font-size: 0.85em;
+    line-height: 1.5;
+}
+
+.conflict-suggestions li:before {
+    content: "→";
+    position: absolute;
+    left: 8px;
+    color: #ffc107;
+    font-weight: bold;
 }
 
 .message-box {
